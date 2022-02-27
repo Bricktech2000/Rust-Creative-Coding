@@ -183,8 +183,6 @@ fn view(app: &App, model: &Model, frame: Frame) {
             let y2: f64 = y / y_end * COLOR_NOISE_FACTOR;
 
             // Choose a color based on screen position
-            // let color = nannou::color::rgb(x % 100.0 + 30.0, y % 100.0 + 30.0, x % 100.0 + 30.0);
-
             let color = nannou::color::hsl(
                 ((model.noise.get([x2, y2]) * COLOR_NOISE_MULTIPLIER + 1.0) / 2.0) as f32,
                 1.0,
