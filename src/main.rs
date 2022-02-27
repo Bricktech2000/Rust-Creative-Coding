@@ -3,16 +3,17 @@ use nannou::{
     prelude::*,
 };
 use rand::{prelude::StdRng, Rng, SeedableRng};
+use std::io::{stdout, Write};
 use std::ops;
 
-const POINT_COUNT: u32 = 80; // number of starting points
+const POINT_COUNT: u32 = 64; // number of starting points
 const POINT_DELTA: f64 = 0.1; // randomized position delta for each point
-const HEADING_NOISE_FACTOR: f64 = 10.0; // multiplies noise input (higher makes more frequent changes in heading)
-const HEADING_NOISE_MULTIPLIER: f64 = 10.0; // multiplies noise output (higher makes larger changes in heading)
-const COLOR_NOISE_FACTOR: f64 = 4.0; // multiplies noise input (higher makes more frequent changes in color)
+const HEADING_NOISE_FACTOR: f64 = 15.0; // multiplies noise input (higher makes more frequent changes in heading)
+const HEADING_NOISE_MULTIPLIER: f64 = 1.0; // multiplies noise output (higher makes larger changes in heading)
+const COLOR_NOISE_FACTOR: f64 = 1.0; // multiplies noise input (higher makes more frequent changes in color)
 const COLOR_NOISE_MULTIPLIER: f64 = 1.1; // multiplies noise output (higher makes larger changes in color)
 const VELOCITY_MULTIPLIER: f64 = 0.25; // multiplies velocity (higher makes faster but coarser)
-const POINT_SIZE: f64 = 0.5; // size of rendered points (1.0 is one pixel)
+const POINT_SIZE: f64 = 1.0; // size of rendered points (1.0 is one pixel)
 const SEED: u64 = 0; // seed for random number generator and noise functions (set to 0 for random seed)
 
 fn main() {
@@ -145,7 +146,7 @@ fn update(app: &App, model: &mut Model, _update: Update) {
                 flow.pos.y as f64 / y_end * HEADING_NOISE_FACTOR,
             ]);
 
-            noise_value *= HEADING_NOISE_MULTIPLIER * std::f64::consts::PI;
+            noise_value *= HEADING_NOISE_MULTIPLIER * 2.0 * std::f64::consts::PI;
 
             // Change the velocity based on the noise
             flow.vel = Vector2 {
@@ -158,7 +159,9 @@ fn update(app: &App, model: &mut Model, _update: Update) {
     }
 
     let elapsed = now.elapsed();
-    println!("Update: {:.2?}", elapsed);
+    let message = format!("\rUpdate: {:.2?}", elapsed);
+
+    print!("{}{}", message, " ".repeat(20 - message.chars().count()));
 }
 
 fn view(app: &App, model: &Model, frame: Frame) {
@@ -199,5 +202,6 @@ fn view(app: &App, model: &Model, frame: Frame) {
     draw.to_frame(app, &frame).unwrap();
 
     let elapsed = now.elapsed();
-    println!("Draw: {:.2?}", elapsed);
+    print!("    Draw: {:.2?}", elapsed);
+    stdout().flush().unwrap();
 }
